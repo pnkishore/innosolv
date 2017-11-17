@@ -18,4 +18,8 @@ object RateConfig {
 
   val CorpTaxRate:BigDecimal = 19
 
+  val PersonalAllowance = BigDecimal(11500)
+  val PersonalAllowanceThreshold = BigDecimal(100000)
+  val PersonalAllowanceReducingFactor = BigDecimal(0.5)
+
 }

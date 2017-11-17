@@ -5,11 +5,11 @@ import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBo
 
 @SpringBootApplication (scanBasePackageClasses = Array(classOf[Config]) )
 @EnableAutoConfiguration
-class ReportimeApp {
+class ContractorTakehomeCalcuationApp {
 }
 
-object ReportimeApp {
+object ContractorTakehomeCalcuationApp {
   def main(args: Array[String]): Unit = {
-    SpringApplication.run(Array(classOf[ReportimeApp].asInstanceOf[AnyRef]), args)
+    SpringApplication.run(Array(classOf[ContractorTakehomeCalcuationApp].asInstanceOf[AnyRef]), args)
   }
 }

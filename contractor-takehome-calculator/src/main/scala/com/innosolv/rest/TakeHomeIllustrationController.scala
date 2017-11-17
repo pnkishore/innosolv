@@ -1,7 +1,8 @@
 package com.innosolv.rest
 
+import com.innosolv.model.ContractorTakehomeCalculationResult
 import com.innosolv.rest.response.TakeHomeIllustration
-import com.innosolv.service.{LimitedCompanyPayStructureGenerator, PayStructureIllustration}
+import com.innosolv.service.ContractorTakehomeCalculator
 import org.springframework.web.bind.annotation.{CrossOrigin, RequestMapping, RequestParam, RestController}
 
 import scala.math.BigDecimal.RoundingMode
@@ -14,13 +15,19 @@ class TakeHomeIllustrationController {
   def generateTakehomeIllustrations(
                                      @RequestParam("companyEarnings") companyEarnings: java.math.BigDecimal,
                                      @RequestParam("expenses") expenses: java.math.BigDecimal = new java.math.BigDecimal(0),
-                                     @RequestParam("spouseShare") spouseShare: java.math.BigDecimal=  new java.math.BigDecimal(0)): List[TakeHomeIllustration] = {
+                                     @RequestParam("spouseShare") spouseShare: java.math.BigDecimal = new java.math.BigDecimal(0)): List[TakeHomeIllustration] = {
 
-    LimitedCompanyPayStructureGenerator.generateIllustrations(companyEarnings, expenses, spouseShare, 5000)
+    /* calculate different take home options by changing salary element by 10000 successively */
+    val salarySeq = for (x <- BigDecimal(0) until companyEarnings by 10000) yield x
+    val salaryTargets = List(BigDecimal(8164)) ++ salarySeq.toList
+    salaryTargets
+      .flatMap(salary => ContractorTakehomeCalculator.calculate(companyEarnings, expenses, spouseShare, salary))
+      .sortBy(_.totalTakehome)
+      .reverse
       .map(toTakeHomeIllustration)
   }
 
-  private[this] def toTakeHomeIllustration(in: PayStructureIllustration): TakeHomeIllustration = {
+  private[this] def toTakeHomeIllustration(in: ContractorTakehomeCalculationResult): TakeHomeIllustration = {
 
     TakeHomeIllustration(directorSalary = str(in.directorsTaxResult.salaryAndOther),
       expenses = str(in.companyTaxResult.expenses),

@@ -1,6 +1,6 @@
 package com.innosolv.service
 
-import com.innosolv.model.PersonalEarnings
+import com.innosolv.model.Earnings
 
 object PersonalAllowanceCalculator {
 
@@ -8,7 +8,7 @@ object PersonalAllowanceCalculator {
   val PersonalAllowanceThreshold = BigDecimal(100000)
   val PersonalAllowanceAdjustmentFactor = BigDecimal(0.5)
 
-  def calculate(in: PersonalEarnings) : BigDecimal = {
+  def calculate(in: Earnings) : BigDecimal = {
     val gross = in.grossIncome
 
     if (gross > PersonalAllowanceThreshold) {

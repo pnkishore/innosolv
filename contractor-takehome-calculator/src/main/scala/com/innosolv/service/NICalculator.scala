@@ -1,19 +1,24 @@
 package com.innosolv.service
 
+import com.innosolv.service.RateConfig._
+
 object NICalculator {
 
-  val EmployeeNiRules = List(
-    NIRule(0, Some(8164), 0),
-    NIRule(8164, Some(45032), 12),
-    NIRule(45032, None, 2))
-
-  val EmployerNiRules = List(
-    NIRule(0, Some(8164), 0),
-    NIRule(8164, None, 13.8))
-
   def calculateEmployerNi(salary: BigDecimal): BigDecimal =
-    EmployerNiRules.filter(_.canApplyTo(salary)).map(_.niOn(salary)).sum
+    List(EmployerNIBasicRate, EmployerNIHigherRate)
+      .map(rate => applyRate(salary, rate))
+      .sum
 
   def calculateEmployeeNi(salary: BigDecimal): BigDecimal =
-    EmployeeNiRules.filter(_.canApplyTo(salary)).map(_.niOn(salary)).sum
+    List(EmployeeNIBasicRate, EmployeeNIHigherRate, EmployeeNIAdditionalHigherRate)
+      .map(rate => applyRate(salary, rate))
+      .sum
+
+  private[this] def applyRate(salary: BigDecimal, rate: NIRate): BigDecimal = {
+    val earningsToTaxAtThisRate = rate.maxThreshold.map(_.min(salary)).getOrElse(salary) - rate.minThreshold
+    Option(earningsToTaxAtThisRate)
+      .find(_ > 0)
+      .map(_ * rate.rate / BigDecimal(100))
+      .getOrElse(BigDecimal(0))
+  }
 }

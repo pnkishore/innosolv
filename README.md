@@ -5,7 +5,9 @@ spouse dividend share to you can see your total take home, ni & PAYE tax at diff
 Best option is in the first row of the results.
 
 To run the app: 
+```
   cd ./contractor-takehome-calculator
   gradlew.bat bootRun
+```  
 
 Then go go http://localhost:8080
